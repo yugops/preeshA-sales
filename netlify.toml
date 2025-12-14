@@ -1,0 +1,9 @@
+[functions]
+  node_bundler = "esbuild"
+
+[functions."*"]
+  external_modules = [
+    "@netlify/neon",
+    "bcryptjs",
+    "jsonwebtoken"
+  ]
