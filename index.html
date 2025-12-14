@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PreeshA Sales - Modern Store</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-left">
+            <div class="logo">
+                <div class="logo-img">
+                    <img src="/04351f11-27c3-46d1-a324-8ac803ca6b0f.png" alt="preeshA sales" width="200" height="200" style="object-fit: contain;">
+                </div>
+                <div class="logo-text">
+                    <span class="brand">preeshA</span>
+                    <span class="brand-sub">sales</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-center">
+            <div class="search-pill">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search products...">
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="icon-btn" id="adminBtn" onclick="handleAdminClick()" title="Admin Mode">
+                <i class="fa-solid fa-user-shield"></i>
+            </button>
+            <button class="icon-btn">
+                <i class="fa-regular fa-heart"></i>
+            </button>
+            <button class="icon-btn">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div id="adminBanner" style="display:none; background:var(--accent); color:white; text-align:center; padding:10px; font-weight:bold; letter-spacing: 1px;">
+        ADMIN MODE ACTIVE 
+        <button onclick="logoutAdmin()" style="margin-left:15px; padding:4px 12px; background:white; color:var(--accent); border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Logout</button>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h3 class="filter-title">Filters</h3>
+            <div class="filter-group">
+                <div class="fg-header">Category <i class="fas fa-chevron-up"></i></div>
+                <ul class="fg-list" id="categoryFilters">
+                    <li><label><input type="checkbox" value="Fashion" class="cat-checkbox"><span class="checkmark"></span><span>Fashion</span></label></li>
+                    <li><label><input type="checkbox" value="Electronics" class="cat-checkbox"><span class="checkmark"></span><span>Electronics</span></label></li>
+                    <li><label><input type="checkbox" value="Accessories" class="cat-checkbox"><span class="checkmark"></span><span>Accessories</span></label></li>
+                    <li><label><input type="checkbox" value="Footwear" class="cat-checkbox"><span class="checkmark"></span><span>Footwear</span></label></li>
+                </ul>
+            </div>
+            
+            <button id="sidebarAddBtn" class="modal-btn" style="margin-top:20px; display:none;" onclick="openAddModal()">
+                <i class="fa-solid fa-plus"></i> Add New Product
+            </button>
+        </aside>
+
+        <main class="content">
+            <div class="content-header">
+                <h2>New Arrivals <span class="count" id="productCount">(0)</span></h2>
+                <div class="sort-container">
+                    <span class="sort-label">Sort by:</span>
+                    <div class="custom-select-wrapper">
+                        <select id="sortSelect" class="custom-select">
+                            <option value="default">Popularity</option>
+                            <option value="low">Price: Low to High</option>
+                            <option value="high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="product-grid" id="grid"></div>
+        </main>
+    </div>
+
+    <div class="overlay" id="loginOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Admin Login</h3>
+                <button class="close-btn" onclick="closeOverlays()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="password" id="adminPass" class="modal-input" placeholder="Enter Password">
+                <p id="loginError" class="error-msg">Incorrect Password!</p>
+                <button class="modal-btn" onclick="checkPassword()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="addOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Add Product</h3>
+                <button class="close-btn" onclick="closeOverlays()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="addProduct(event)" class="modal-body">
+                <input type="text" id="addName" class="modal-input" placeholder="Product Name" required>
+                <input type="number" id="addPrice" class="modal-input" placeholder="Price ($)" required>
+                <div class="custom-select-wrapper" style="margin-bottom: 15px;">
+                    <select id="addCat" class="custom-select" style="width: 100%">
+                        <option value="Fashion">Fashion</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Footwear">Footwear</option>
+                    </select>
+                </div>
+                <input type="text" id="addImg" class="modal-input" placeholder="Image URL (optional)">
+                <button type="submit" class="modal-btn">Add Product</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="overlay" id="editOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Product</h3>
+                <button class="close-btn" onclick="closeOverlays()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveEditProduct(event)" class="modal-body">
+                <input type="hidden" id="editId">
+                
+                <label style="font-size:0.8rem; font-weight:bold; color:var(--text-light)">Product Name</label>
+                <input type="text" id="editName" class="modal-input" required>
+                
+                <label style="font-size:0.8rem; font-weight:bold; color:var(--text-light)">Price ($)</label>
+                <input type="number" id="editPrice" class="modal-input" required>
+                
+                <label style="font-size:0.8rem; font-weight:bold; color:var(--text-light)">Category</label>
+                <div class="custom-select-wrapper" style="margin-bottom: 15px;">
+                    <select id="editCat" class="custom-select" style="width: 100%">
+                        <option value="Fashion">Fashion</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Footwear">Footwear</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="modal-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
