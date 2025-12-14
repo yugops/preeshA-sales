@@ -1,9 +1,6 @@
-[functions]
-  node_bundler = "esbuild"
+[build]
+  publish = "."
 
-[functions."*"]
-  external_modules = [
-    "@netlify/neon",
-    "bcryptjs",
-    "jsonwebtoken"
-  ]
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
