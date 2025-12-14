@@ -1,5 +1,7 @@
-import { neon } from "@netlify/neon";
-import jwt from "jsonwebtoken";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const { neon } = require("@netlify/neon");
+
 
 export const handler = async (event) => {
   try {
@@ -35,3 +37,4 @@ export const handler = async (event) => {
     };
   }
 };
+
