@@ -2,14 +2,31 @@ import { neon } from "@netlify/neon";
 import jwt from "jsonwebtoken";
 
 export const handler = async (event) => {
-    const token = event.headers.authorization?.split(" ")[1];
-    if (!token) return { statusCode: 401 };
+  try {
+    const auth = event.headers.authorization;
+    if (!auth) return { statusCode: 401 };
 
+    const token = auth.split(" ")[1];
     jwt.verify(token, process.env.JWT_SECRET);
 
-    const { id } = JSON.parse(event.body);
-    const sql = neon();
+    if (!event.body) {
+      return { statusCode: 400, body: "Missing body" };
+    }
 
-    await sql`DELETE FROM products WHERE id=${id}`;
+    const { id } = JSON.parse(event.body);
+
+    const sql = neon(process.env.NETLIFY_DATABASE_URL);
+
+    await sql`
+      DELETE FROM products
+      WHERE id = ${id}
+    `;
+
     return { statusCode: 200 };
+  } catch (err) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: err.message })
+    };
+  }
 };
